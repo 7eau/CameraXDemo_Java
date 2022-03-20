@@ -26,14 +26,12 @@ import androidx.camera.video.Recorder;
 import androidx.camera.video.Recording;
 import androidx.camera.video.VideoCapture;
 import androidx.camera.video.VideoRecordEvent;
-import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.awo.newcameraxtest.databinding.ActivityMainBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageCapture imageCapture = null;
 
-    private VideoCapture videoCapture = null;
+    private VideoCapture<Recorder> videoCapture = null;
     private Recording recording = null;
 
     private ExecutorService cameraExecutor;
@@ -109,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.RECORD_AUDIO},
                         Configuration.REQUEST_CODE_PERMISSIONS);
             }
-            Recorder recorder = (Recorder) videoCapture.getOutput();
-            recording = recorder.prepareRecording(this, mediaStoreOutputOptions)
+            recording = videoCapture.getOutput().prepareRecording(this, mediaStoreOutputOptions)
                     .withAudioEnabled() // 开启音频录制
                     .start(ContextCompat.getMainExecutor(this), videoRecordEvent -> {
                         if (videoRecordEvent instanceof VideoRecordEvent.Start) {
@@ -188,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 ProcessCameraProvider processCameraProvider = cameraProviderFuture.get();
 
                 // 创建一个Preview 实例，并设置该实例的 surface 提供者（provider）。
-                PreviewView viewFinder = (PreviewView)findViewById(R.id.viewFinder);
                 Preview preview = new Preview.Builder()
                         .build();
                 preview.setSurfaceProvider(viewBinding.viewFinder.getSurfaceProvider());
@@ -258,12 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "未授权录制音频权限！", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    private File getOutputDirectory() {
-        File mediaDir = new File(getExternalMediaDirs()[0], getString(R.string.app_name));
-        boolean isExist = mediaDir.exists() || mediaDir.mkdir();
-        return isExist ? mediaDir : null;
     }
 
     @Override
