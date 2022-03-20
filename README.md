@@ -282,7 +282,7 @@ private void startCamera() {
 
                 // 重新绑定用例前先解绑
                 processCameraProvider.unbindAll();
-                */
+                
                 processCameraProvider.bindToLifecycle(MainActivity.this, cameraSelector,
                         preview);
 
