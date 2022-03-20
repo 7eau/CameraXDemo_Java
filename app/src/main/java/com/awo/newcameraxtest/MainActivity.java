@@ -4,12 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +25,6 @@ import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import androidx.camera.video.Recording;
 import androidx.camera.video.VideoCapture;
-import androidx.camera.video.VideoOutput;
 import androidx.camera.video.VideoRecordEvent;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
@@ -36,15 +33,8 @@ import androidx.core.content.ContextCompat;
 import com.awo.newcameraxtest.databinding.ActivityMainBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -121,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Recorder recorder = (Recorder) videoCapture.getOutput();
             recording = recorder.prepareRecording(this, mediaStoreOutputOptions)
+                    .withAudioEnabled() // 开启音频录制
                     .start(ContextCompat.getMainExecutor(this), videoRecordEvent -> {
                         if (videoRecordEvent instanceof VideoRecordEvent.Start) {
                             viewBinding.videoCaptureButton.setText(getString(R.string.stop_capture));
